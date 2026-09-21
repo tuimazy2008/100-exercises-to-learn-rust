@@ -7,6 +7,10 @@ pub enum Status {
     Done,
 }
 
+impl TryFrom<String> for Status {
+    fn try_from(value: String) -> Result<Self, Self::Error> {}
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

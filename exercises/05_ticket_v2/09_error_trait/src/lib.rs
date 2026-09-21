@@ -3,17 +3,63 @@
 //  The docs for the `std::fmt` module are a good place to start and look for examples:
 //  https://doc.rust-lang.org/std/fmt/index.html#write
 
+use std::{
+    error::Error,
+    fmt::{self, Display},
+};
+
+#[derive(Debug)]
 enum TicketNewError {
     TitleError(String),
     DescriptionError(String),
 }
+
+impl Display for TicketNewError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TicketNewError::DescriptionError(info) => {
+                write!(f, "{info}")
+            }
+            TicketNewError::TitleError(info) => {
+                write!(f, "{info}")
+            }
+        }
+    }
+}
+
+impl Error for TicketNewError {}
 
 // TODO: `easy_ticket` should panic when the title is invalid, using the error message
 //   stored inside the relevant variant of the `TicketNewError` enum.
 //   When the description is invalid, instead, it should use a default description:
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    Ticket::new(title, description, status).unwrap()
+}
+
+fn title_is_valid(title: &str) -> Result<String, TicketNewError> {
+    if title.is_empty() {
+        return Err(TicketNewError::TitleError(
+            "Title cannot be empty".to_string(),
+        ));
+    }
+    if title.len() > 50 {
+        return Err(TicketNewError::TitleError(
+            "Title cannot be longer than 50 bytes".to_string(),
+        ));
+    }
+    Ok((*title).to_string())
+}
+
+fn description_is_valid(description: &str) -> String {
+    if description.is_empty() {
+        return "Description not provided".to_string();
+    }
+    if description.len() > 500 {
+        return "Description not provided".to_string();
+    }
+
+    return (*description).to_string();
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -36,26 +82,8 @@ impl Ticket {
         description: String,
         status: Status,
     ) -> Result<Ticket, TicketNewError> {
-        if title.is_empty() {
-            return Err(TicketNewError::TitleError(
-                "Title cannot be empty".to_string(),
-            ));
-        }
-        if title.len() > 50 {
-            return Err(TicketNewError::TitleError(
-                "Title cannot be longer than 50 bytes".to_string(),
-            ));
-        }
-        if description.is_empty() {
-            return Err(TicketNewError::DescriptionError(
-                "Description cannot be empty".to_string(),
-            ));
-        }
-        if description.len() > 500 {
-            return Err(TicketNewError::DescriptionError(
-                "Description cannot be longer than 500 bytes".to_string(),
-            ));
-        }
+        let title = title_is_valid(&title)?;
+        let description = description_is_valid(&description);
 
         Ok(Ticket {
             title,

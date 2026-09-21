@@ -1,6 +1,20 @@
 // Rewrite the factorial function using a `for` loop.
 pub fn factorial(n: u32) -> u32 {
-    todo!()
+    if n == 0 {
+        return 1;
+    } else if n == 1 {
+        return 1;
+    } else if n == 2 {
+        return 2;
+    } else {
+        let mut counter = 2;
+        let mut tmp = 2;
+        while counter != n {
+            counter += 1;
+            tmp = tmp * counter;
+        }
+        tmp
+    }
 }
 
 #[cfg(test)]

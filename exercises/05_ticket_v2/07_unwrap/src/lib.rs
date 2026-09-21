@@ -1,8 +1,31 @@
+use std::fmt::Error;
+
 // TODO: `easy_ticket` should panic when the title is invalid.
 //   When the description is invalid, instead, it should use a default description:
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    Ticket::new(title, description, status).unwrap()
+}
+
+fn title_is_valid(title: &str) -> Result<String, String> {
+    if title.is_empty() {
+        return Err("Title cannot be empty".to_string());
+    }
+    if title.len() > 50 {
+        return Err("Title cannot be longer than 50 bytes".to_string());
+    }
+    Ok((*title).to_string())
+}
+
+fn description_is_valid(description: &str) -> String {
+    if description.is_empty() {
+        return "Description not provided".to_string();
+    }
+    if description.len() > 500 {
+        return "Description not provided".to_string();
+    }
+
+    return (*description).to_string();
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -21,18 +44,8 @@ enum Status {
 
 impl Ticket {
     pub fn new(title: String, description: String, status: Status) -> Result<Ticket, String> {
-        if title.is_empty() {
-            return Err("Title cannot be empty".to_string());
-        }
-        if title.len() > 50 {
-            return Err("Title cannot be longer than 50 bytes".to_string());
-        }
-        if description.is_empty() {
-            return Err("Description cannot be empty".to_string());
-        }
-        if description.len() > 500 {
-            return Err("Description cannot be longer than 500 bytes".to_string());
-        }
+        let title = title_is_valid(&title)?;
+        let description = description_is_valid(&description);
 
         Ok(Ticket {
             title,
